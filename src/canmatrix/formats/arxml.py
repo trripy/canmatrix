@@ -1231,7 +1231,10 @@ def get_signals(signal_array, frame, ea, multiplex_id, float_factory, bit_offset
 
             if initvalue is not None and initvalue.text is not None:
                 initvalue.text = canmatrix.utils.guess_value(initvalue.text)
-                new_signal.initial_value = float_factory(initvalue.text)
+                try:
+                    new_signal.initial_value = float_factory(initvalue.text)
+                except decimal.InvalidOperation:
+                    logger.error("could not decode value {}".format(initvalue.text))
 
             for key, value in list(values.items()):
                 new_signal.add_values(canmatrix.utils.decode_number(key, float_factory), value)
