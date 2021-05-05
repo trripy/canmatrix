@@ -256,7 +256,8 @@ def dump(in_db, f, **options):
 
             if max([x.phys2raw(None) for y in db.frames for x in y.signals]) > 0 or min([x.phys2raw(None) for y in db.frames for x in y.signals]) < 0:
                 db.add_signal_defines("GenSigStartValue", 'FLOAT 0 100000000000')
-
+    # Adds the Network Nodes address value range
+    db.add_ecu_defines("NmStationAddress", 'INT 0 255')
 
 
     # Frames
@@ -372,7 +373,9 @@ def dump(in_db, f, **options):
     for define_name in sorted(defaults):
         f.write(('BA_DEF_DEF_ "' + define_name + '" ').encode(dbc_export_encoding, ignore_encoding_errors) +
                 defaults[define_name].encode(dbc_export_encoding, 'replace') + ';\n'.encode(dbc_export_encoding, ignore_encoding_errors))
-
+    # TODO : Gather all the node ecu address from user and create nodes automatically
+    # Below placeholder sets all the ecu address to 0xFE(HEX)
+    f.write(('BA_DEF_DEF_  "NmStationAddress" 254;\n').encode(dbc_export_encoding, ignore_encoding_errors))
     # ecu-attributes:
     for ecu in db.ecus:
         for attrib, val in sorted(ecu.attributes.items()):
